@@ -1,0 +1,18 @@
+server:
+  contextPath: /
+  port: 8088
+#spring:
+#  devtools:
+#    livereload:
+#      enabled: true
+#    restart:
+#      enabled: false
+#  freemarker:
+#    cache: false
+#  thymeleaf:
+#    cache: false
+
+logging:
+  level:
+    com.websocket.edu: debug
+    

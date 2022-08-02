@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            connectWebSocket();
+        });
+
+        let stompClient;
+        function connectWebSocket() {
+            let socket = new SockJS("room1");
+            stompClient = Stomp.over(socket);
+            //stompClient.debug = null; // 디버그 모드 해제
+
+            stompClient.connect({}, function(frame) {
+                let userName = frame.headers["user-name"];
+                console.log('connect userName' + userName);
+
+                stompClient.subscribe("/alarm/queue/info", function(response) {
+                    console.log('----- Server to Client Queue Message -----');
+                    console.log(JSON.parse(response.body));
+                    console.log('----- Server to Client Queue Message -----');
+                });
+
+                stompClient.subscribe("/alarm/queue/info2", function(response) {
+                    console.log('----- Server to Client Queue2 Message -----');
+                    console.log(response.body);
+                    console.log('----- Server to Client Queue2 Message -----');
+                });
+
+                stompClient.subscribe("/topic/message", function(response) {
+                    console.log('----- Server to Client Topic Message -----');
+                    console.log(response);
+                    console.log('----- Server to Client Topic Message -----');
+                });
+            });
+        }
+
+        function sendMessage() {
+            stompClient.send("/chat", {}, JSON.stringify({"message": "hi"}));
+        }
+
+        function sendMessage2() {
+            stompClient.send("/info", {}, JSON.stringify({"message": "hi"}));
+        }
+
+        function sendMessage3() {
+            let userName = document.getElementById("targetUser").value;
+            stompClient.send("/info2", {}, JSON.stringify({"userName": userName, "message": "hi"}));
+        }
+
+        function disConnected() {
+            stompClient.disconnect();
+        }
+    </script>
+
+</head>
+<body>
+
+<button onclick="javascript: sendMessage();">메시지 보내기</button>
+<button onclick="javascript: sendMessage2();">메시지 보내기2</button>
+
+<input id="targetUser" type="text" />
+<button onclick="javascript: sendMessage3();">메시지 보내기3</button>
+
+<button onclick="javascript: disConnected();">세션 끊자</button>
+
+<div id="message">
+</div>
+
+</body>
+</html>
