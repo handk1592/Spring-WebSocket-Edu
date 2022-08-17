@@ -12,6 +12,18 @@ server:
 #  thymeleaf:
 #    cache: false
 
+spring:
+  redis:
+    host: localhost
+    password:
+    port: 6379
+    lettuce:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-active: 8
+        max-wait: -1
+
 logging:
   level:
     com.websocket.edu: debug

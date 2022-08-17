@@ -2,9 +2,13 @@ package com.websocket.edu.controller;
 
 
 import com.websocket.edu.domain.SocketUser;
+import com.websocket.edu.service.RedisPublisher;
+import com.websocket.edu.service.RedisSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -23,6 +27,18 @@ public class ChatController {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    private RedisPublisher redisPublisher;
+
+    @Autowired
+    private RedisSubscriber redisSubscriber;
+
+    @Autowired
+    private RedisMessageListenerContainer redisMessageListener;
+
+//    @Autowired
+//    private ChatRoomRepository chatRoomRepository;
 
     @MessageMapping("chat")
     @SendTo("/topic/message")
@@ -50,6 +66,16 @@ public class ChatController {
         System.out.println("Client to Server info2 UserName: " + user.getUserName() + ", >> sessionId: " +  accessor.getSessionId());
 
         simpMessagingTemplate.convertAndSendToUser(user.getUserName(), "/queue/info2", user.getMessage());
+    }
+
+    /**
+     * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
+     */
+    @MessageMapping("/redis/message")
+    public void message(SocketUser user) {
+        ChannelTopic test = new ChannelTopic(user.getUserName());
+
+        redisPublisher.publish(test, user);
     }
 
 }

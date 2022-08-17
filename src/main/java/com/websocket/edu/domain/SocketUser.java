@@ -1,6 +1,12 @@
 package com.websocket.edu.domain;
 
-public class SocketUser {
+import java.io.Serializable;
+
+public class SocketUser implements Serializable {
+
+
+    private static final long serialVersionUID = 1230428703458384499L;
+
     private String userName;
     private String message;
 
