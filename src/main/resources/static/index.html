@@ -33,6 +33,12 @@
                     console.log('----- Server to Client Queue2 Message -----');
                 });
 
+                stompClient.subscribe("/alarm/queue/info3", function(response) {
+                    console.log('----- Server to Client Queue2 Message -----');
+                    console.log(response.body);
+                    console.log('----- Server to Client Queue2 Message -----');
+                });
+
                 stompClient.subscribe("/topic/message", function(response) {
                     console.log('----- Server to Client Topic Message -----');
                     console.log(response);
@@ -54,6 +60,11 @@
             stompClient.send("/info2", {}, JSON.stringify({"userName": userName, "message": "hi"}));
         }
 
+        function sendMessage4() {
+            let userName = document.getElementById("targetUser").value;
+            stompClient.send("/redis/message", {}, JSON.stringify({"userName": userName, "message": "hi"}));
+        }
+
         function disConnected() {
             stompClient.disconnect();
         }
@@ -62,11 +73,12 @@
 </head>
 <body>
 
-<button onclick="javascript: sendMessage();">메시지 보내기</button>
+<button onclick="javascript: sendMessage();">구독자들에게 메시지 보내기</button>
 <button onclick="javascript: sendMessage2();">메시지 보내기2</button>
 
 <input id="targetUser" type="text" />
 <button onclick="javascript: sendMessage3();">메시지 보내기3</button>
+<button onclick="javascript: sendMessage4();">메시지 보내기4</button>
 
 <button onclick="javascript: disConnected();">세션 끊자</button>
 
